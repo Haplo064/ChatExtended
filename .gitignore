@@ -1,0 +1,6 @@
+.gitattributes
+.vs/
+bin/
+obj/
+.idea/
+ChatExtended.sln.DotSettings.user
