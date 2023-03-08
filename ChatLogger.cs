@@ -162,7 +162,7 @@ namespace ChatExtended
                 sampleText += "Hugh Man";
                 if (log.ServerName)
                 {
-                    sampleText += "(Balmung)";
+                    sampleText += " (Balmung)";
                 }
             }
             else

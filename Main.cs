@@ -42,12 +42,14 @@ namespace ChatExtended
         private int dirtyHack = 0;
         private int _version = 1;
         private List<ChatMessage> _messages = new List<ChatMessage>();
-        private List<LogConfig> _logConfigs = new List<LogConfig>();
-        
-        private bool localDate = true;
-        private bool chatLogger = true;
-
         static string pathString = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FFXIVLogs\";
+        
+        //Saved Configs here
+        private List<LogConfig> _logConfigs;
+        private bool localDate;
+        private bool chatLogger;
+
+        
         
         public ChatExtended(
             DalamudPluginInterface pluginInterface,
@@ -69,6 +71,10 @@ namespace ChatExtended
 
             _config = pluginInterface.GetPluginConfig() as Config ?? new Config();
 
+            _logConfigs = _config.LogConfigs;
+            localDate = _config.LocalDate;
+            chatLogger = _config.ChatLogger;
+            
             _pi.UiBuilder.Draw += DrawConfig;
             _pi.UiBuilder.OpenConfigUi += ConfigWindow;
             _chat.ChatMessage += OnChat;
@@ -100,6 +106,9 @@ namespace ChatExtended
 
         private void SaveConfig()
         {
+            _config.LogConfigs = _logConfigs;
+            _config.ChatLogger = chatLogger;
+            _config.LocalDate = localDate;
             _pi.SavePluginConfig(_config);
         }
     }
@@ -107,7 +116,12 @@ namespace ChatExtended
 
     public class Config : IPluginConfiguration
     {
-        public int Version { get; set; } = 1;
+        public int Version { get; set; } = 0;
+        
+        public List<ChatExtended.LogConfig> LogConfigs { get; set; } = new List<ChatExtended.LogConfig>();
+        public bool LocalDate { get; set; } = true;
+        public bool ChatLogger { get; set; } = true;
+        
     }
 
     public class ChatMessage

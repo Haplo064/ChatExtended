@@ -28,8 +28,9 @@ namespace ChatExtended
                 ImGui.PopStyleVar();
 
                 ImGui.Checkbox("Localise Announcement Date/Time", ref localDate);
-
-                ImGui.Checkbox("Logging", ref chatLogger);
+                if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Replaces the GMT time in announcements with your local time."); }
+                ImGui.Checkbox("Enable Chat Logging", ref chatLogger);
+                if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Log chat to 'Documents/FFXIVLogs' text files."); }
 
                 if (chatLogger)
                 {
@@ -63,6 +64,15 @@ namespace ChatExtended
                         if (ImGui.BeginTabItem($"{log.Name}##{TabNumber}"))
                         {
                             ImGui.Checkbox($"DateStamp File##{TabNumber}", ref log.TimeStampFile);
+                            ImGui.SameLine();
+                            if (log.TimeStampFile)
+                            {
+                                ImGui.Text($"  (Saving as {GetDate()+log.Name}.txt)");
+                            }
+                            else
+                            {
+                                ImGui.Text($"  (Saving as {log.Name}.txt)");
+                            }
                             ImGui.Checkbox($"TimeStamp Chat##{TabNumber}", ref log.TimeStampMessages);
                             if (log.TimeStampMessages)
                             {
@@ -78,8 +88,8 @@ namespace ChatExtended
                             }
                             ImGui.Checkbox($"Plaintext##{TabNumber}", ref log.PlainText);
 
-                            ImGui.Separator();
-                            ImGui.Text("[Sample Text]");
+                            
+                            ImGui.Text("\n==Example Text Below==");
                             ImGui.Text(ChatExample(log));
 
                             ImGui.Separator();
