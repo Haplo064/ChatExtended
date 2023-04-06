@@ -11,8 +11,11 @@ using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using ChatExtended;
 using Dalamud.Game.Text;
+using Dalamud.Utility;
 
 namespace ChatExtended
 {
@@ -95,9 +98,27 @@ namespace ChatExtended
                             ImGui.Separator();
                             ImGui.Text("Chat Channels to save");
                             ImGui.Columns(4);
-                            for (int i = 1; i < Enum.GetNames((typeof(XivChatType))).Length; i++)
+                            
+                            // Set i to -1 so we skip None
+                            var i = -1;
+                            foreach (var type in Enum.GetValues<XivChatType>())
                             {
-                                ImGui.Checkbox(Enum.GetNames(typeof(XivChatType))[i], ref log.Channels[i]);
+                                // Skip None, but make sure to increase i
+                                i++;
+                                if (i == 0) continue;
+                                
+                                // Get the setting and label for this channel
+                                var typeSetting = log.Channels.GetValueOrDefault(type, false);
+                                var label = type.GetAttribute<XivChatTypeInfoAttribute>()?.FancyName ?? type.ToString();
+                                
+                                // This is just dumb
+                                if (type == XivChatType.CrossParty)
+                                    label = "Cross-World Party";
+                                
+                                // Draw the checkbox and update the setting if it's been changed
+                                if (ImGui.Checkbox($"{label}##{i}", ref typeSetting))
+                                    log.Channels[type] = typeSetting;
+                                
                                 if (i % 10 == 0)
                                 {
                                     ImGui.NextColumn();
