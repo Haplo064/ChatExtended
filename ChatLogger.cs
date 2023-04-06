@@ -38,8 +38,7 @@ namespace ChatExtended
         {
             foreach (var log in _logConfigs)
             {
-
-                if (log.Channels[Array.IndexOf(log.ChannelEnums, type)])
+                if (log.Channels.GetValueOrDefault(type, false))
                 {
                     var file = @$"{log.Name}.txt";
 
@@ -249,9 +248,12 @@ namespace ChatExtended
             public bool ServerName = true;
             public bool PlainText = true;
             public bool ChatType = true;
-            public bool[] Channels = new bool[Enum.GetNames((typeof(XivChatType))).Length];
-            public Array ChannelEnums = Enum.GetValues(typeof(XivChatType));
 
+            // Dictionary here to provide a lookup for enabled channels
+            // that deserialize *as enum* from the config file
+            // A hashset would technically be more efficient, but it does
+            // not serialize into the Enum values themselves, solving nothing!
+            public readonly Dictionary<XivChatType, bool> Channels = new();
         }
     }
 }
